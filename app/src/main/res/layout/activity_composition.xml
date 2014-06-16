@@ -6,6 +6,16 @@
 
     <com.bastien.selflip.views.CompositingView
         android:layout_width="match_parent"
+        android:id="@+id/compositingView"
         android:layout_height="match_parent" />
+
+    <SeekBar
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:thumbOffset="10dp"
+        android:max="100"
+        android:id="@+id/seekBar"
+        android:padding="10dip"/>
 
 </FrameLayout>

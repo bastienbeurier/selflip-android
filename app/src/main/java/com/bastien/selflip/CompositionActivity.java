@@ -4,14 +4,26 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.bastien.selflip.R;
+import android.widget.SeekBar;
 
-public class CompositionActivity extends Activity {
+import com.bastien.selflip.R;
+import com.bastien.selflip.views.CompositingView;
+
+public class CompositionActivity extends Activity implements SeekBar.OnSeekBarChangeListener {
+
+    private SeekBar mGradientSeekBar;
+    private CompositingView mCompositingView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_composition);
+
+        mCompositingView = (CompositingView) findViewById(R.id.compositingView);
+
+        mGradientSeekBar = (SeekBar) findViewById(R.id.seekBar);
+        mGradientSeekBar.setOnSeekBarChangeListener(this);
+        mGradientSeekBar.setProgress(50);
     }
 
 
@@ -32,5 +44,22 @@ public class CompositionActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if(fromUser){
+            mCompositingView.setGradientPosition(progress / 100f);
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 }

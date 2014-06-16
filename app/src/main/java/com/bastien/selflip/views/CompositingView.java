@@ -2,7 +2,6 @@ package com.bastien.selflip.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,6 +11,7 @@ import android.graphics.Rect;
 import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewTreeObserver;
 
 /**
  * Created by guillaumelachaud on 6/15/14.
@@ -31,17 +31,14 @@ public class CompositingView extends View {
 
     public CompositingView(Context context) {
         super(context);
-        init();
     }
 
     public CompositingView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
     }
 
     public CompositingView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
     }
 
     private void init() {
@@ -62,9 +59,9 @@ public class CompositingView extends View {
 
     private void setupGradient() {
         Paint p = new Paint();
-        int offset = (int) (mGradientPosition * (getHeight() / 2));
+        int offset = (int) ((mGradientPosition - 0.5) * (getHeight() / 2));
 
-        Shader shader = new LinearGradient(0, getHeight()/2 + offset,0, getHeight()/2+(float) (0.05*getHeight()),new int[] {
+        Shader shader = new LinearGradient(0, getHeight()/2 + offset,0, offset + getHeight()/2+(float) (0.05*getHeight()),new int[] {
                 Color.BLACK, Color.TRANSPARENT },
                 null, Shader.TileMode.CLAMP);
 
@@ -100,6 +97,21 @@ public class CompositingView extends View {
         mFadedBitmap = fadedBitmap;
         setupBitmapShader();
         invalidate();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @SuppressWarnings("deprecation")
+            @Override
+            public void onGlobalLayout() {
+                init();
+
+                getViewTreeObserver().removeGlobalOnLayoutListener(this);
+            }
+        });
     }
 
 }
