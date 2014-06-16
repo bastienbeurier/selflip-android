@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
@@ -25,8 +26,10 @@ public class CompositingView extends View {
     private Paint mShaderPaint;
     private Paint mBackgroundPaint = new Paint();
 
-    private float mGradientPosition = 0.0f;
+    private float mGradientPosition = 0.5f;
 
+    private int mX = 0;
+    private int mY = 0;
 
 
     public CompositingView(Context context) {
@@ -53,7 +56,7 @@ public class CompositingView extends View {
         if(mBackgroundBitmap != null){
             canvas.drawBitmap(mBackgroundBitmap, 0, 0, mBackgroundPaint);
         }
-        canvas.drawBitmap(mMaskBitmap,0,0,mShaderPaint);
+        canvas.drawBitmap(mMaskBitmap,mX,mY,mShaderPaint);
 
     }
 
@@ -100,6 +103,22 @@ public class CompositingView extends View {
             invalidate();
         }
 
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            return true;
+        }
+
+        if(event.getAction() == MotionEvent.ACTION_MOVE){
+            mX = (int) event.getRawX() - getWidth() / 2;
+            mY = (int) event.getRawY() - getHeight() / 2;
+            invalidate();
+        }
+
+        return super.onTouchEvent(event);
     }
 
     @Override

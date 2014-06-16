@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.widget.SeekBar;
 
 import com.bastien.selflip.R;
@@ -26,8 +27,9 @@ public class CompositionActivity extends Activity implements SeekBar.OnSeekBarCh
         mGradientSeekBar.setOnSeekBarChangeListener(this);
         mGradientSeekBar.setProgress(50);
 
-        mCompositingView.setFadedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
-        mCompositingView.setBackgroundBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.apple_logo));
+        mCompositingView.setFadedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.fd
+        ));
+        mCompositingView.setBackgroundBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.bg));
     }
 
 
