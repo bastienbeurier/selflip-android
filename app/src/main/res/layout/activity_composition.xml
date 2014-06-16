@@ -18,4 +18,12 @@
         android:id="@+id/seekBar"
         android:padding="10dip"/>
 
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:padding="10dip"
+        android:onClick="onSave"
+        android:src="@android:drawable/ic_menu_save"/>
+
 </FrameLayout>

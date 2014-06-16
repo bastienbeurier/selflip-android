@@ -2,6 +2,7 @@ package com.bastien.selflip.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,6 +15,10 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 /**
  * Created by guillaumelachaud on 6/15/14.
@@ -148,6 +153,16 @@ public class CompositingView extends View {
                 getViewTreeObserver().removeGlobalOnLayoutListener(this);
             }
         });
+    }
+
+    public void saveToDisk() throws FileNotFoundException {
+        File f = new File(getContext().getExternalFilesDir(null).getAbsolutePath(), "selflip_" + System.currentTimeMillis() + ".jpg");
+        FileOutputStream out = new FileOutputStream(f);
+        Bitmap b = Bitmap.createBitmap(getWidth() , getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        invalidate();
+        draw(c);
+        b.compress(Bitmap.CompressFormat.JPEG, 100, out);
     }
 
 }

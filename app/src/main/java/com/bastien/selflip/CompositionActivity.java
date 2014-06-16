@@ -6,10 +6,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.SeekBar;
 
 import com.bastien.selflip.R;
 import com.bastien.selflip.views.CompositingView;
+
+import java.io.FileNotFoundException;
 
 public class CompositionActivity extends Activity implements SeekBar.OnSeekBarChangeListener {
 
@@ -67,5 +70,13 @@ public class CompositionActivity extends Activity implements SeekBar.OnSeekBarCh
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 
+    }
+
+    public void onSave(View v){
+        try {
+            mCompositingView.saveToDisk();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
