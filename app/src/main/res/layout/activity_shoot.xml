@@ -1,16 +1,37 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="@android:color/black"
     tools:context=".ShootActivity">
 
-    <TextView
-        android:text="@string/hello_world"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <FrameLayout
+        android:id="@+id/camera_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
-</RelativeLayout>
+    <FrameLayout
+        android:id="@+id/camera_bottom_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+        <Button
+            android:id="@+id/capture_button"
+            android:layout_width="100dp"
+            android:layout_height="79dp"
+            android:background="@drawable/shoot_capture_button"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:id="@+id/camera_flip_button"
+            android:layout_width="61dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:src="@drawable/shoot_flip_button"
+            android:layout_gravity="center|right"
+            android:layout_marginRight="30dp"/>
+
+    </FrameLayout>
+
+</FrameLayout>
