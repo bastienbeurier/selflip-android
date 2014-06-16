@@ -1,12 +1,16 @@
 package com.bastien.selflip;
 
 import android.app.Activity;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
 public class ShootActivity extends Activity {
+    private Camera mCamera = null;
+
+//    private CameraPreview mPreview = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
