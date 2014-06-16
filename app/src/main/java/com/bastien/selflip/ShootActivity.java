@@ -1,6 +1,11 @@
 package com.bastien.selflip;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -14,9 +19,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bastien.selflip.utils.ImageUtils;
 import com.bastien.selflip.views.CameraPreview;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,7 +41,15 @@ public class ShootActivity extends Activity {
 
     private FrameLayout preview = null;
 
-    private String imagePath = null;
+    private String topImagePath = null;
+
+    private String bottomImagePath = null;
+
+    private ImageView topImage = null;
+
+    private View bottomBlackRectangle = null;
+
+    private int pictureMode = 0;
 
     /**
      *  Activity-related methods
@@ -44,6 +59,9 @@ public class ShootActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shoot);
+
+        topImage = (ImageView) findViewById(R.id.top_image);
+        bottomBlackRectangle = findViewById(R.id.bottom_black_rectangle);
 
         //Front camera button
         ImageView flipCameraView = (ImageView) findViewById(R.id.camera_flip_button);
@@ -77,6 +95,8 @@ public class ShootActivity extends Activity {
                     }
                 }
         );
+
+        topPictureMode();
     }
 
     @Override
@@ -95,6 +115,29 @@ public class ShootActivity extends Activity {
         } else {
             setUpCamera(1);
         }
+    }
+
+    private void topPictureMode() {
+        pictureMode = 0;
+
+        topImage.setImageBitmap(null);
+        topImage.setVisibility(View.INVISIBLE);
+
+        bottomBlackRectangle.setVisibility(View.VISIBLE);
+    }
+
+    private void bottomPictureMode() {
+        pictureMode = 1;
+
+        if (frontCamera) {
+            setUpCamera(0);
+        } else {
+            setUpCamera(1);
+        }
+
+        topImage.setVisibility(View.VISIBLE);
+
+        bottomBlackRectangle.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -188,7 +231,7 @@ public class ShootActivity extends Activity {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
 
-            File pictureFile = getOutputMediaFile();
+            File pictureFile = ImageUtils.getOutputMediaFile();
 
             if (pictureFile == null){
                 //Check storage permission
@@ -208,18 +251,36 @@ public class ShootActivity extends Activity {
                 pictureFailed();
             }
 
-            imagePath = pictureFile.getAbsolutePath().toString();
 
-//            if (formattedPicture.getHeight() < formattedPicture.getWidth()) {
-//                if (frontCamera) {
-//                    imageCamera = 0;
-//                    formattedPicture = ImageUtils.rotateImage(formattedPicture);
-//                } else {
-//                    imageCamera = 1;
-//                    formattedPicture = ImageUtils.reverseRotateImage(formattedPicture);
-//                    formattedPicture = ImageUtils.mirrorBitmap(formattedPicture);
-//                }
-//            }
+
+            if (pictureMode == 0) {
+                topImagePath = pictureFile.getAbsolutePath().toString();
+
+                Bitmap formattedPicture = ImageUtils.decodeFile(topImagePath);
+
+                if (formattedPicture.getHeight() < formattedPicture.getWidth()) {
+                    if (frontCamera) {
+                        formattedPicture = ImageUtils.rotateImage(formattedPicture);
+                    } else {
+                        formattedPicture = ImageUtils.reverseRotateImage(formattedPicture);
+                        formattedPicture = ImageUtils.mirrorBitmap(formattedPicture);
+                    }
+                }
+
+                float previewRatio = (float) preview.getHeight()/ (float) preview.getWidth();
+                topImage.setImageBitmap(ImageUtils.resizeAndCropToTopHalf(formattedPicture, previewRatio));
+
+                bottomPictureMode();
+            } else {
+                bottomImagePath = pictureFile.getAbsolutePath().toString();
+
+                Intent composition = new Intent(ShootActivity.this, CompositionActivity.class);
+
+                composition.putExtra("topImage", topImagePath);
+                composition.putExtra("bottomImage", bottomImagePath);
+
+                startActivity(composition);
+            }
         }
     };
 
@@ -239,36 +300,5 @@ public class ShootActivity extends Activity {
      *  Image-related methods
      */
 
-    private File getOutputMediaFile() {
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-
-        if (isSDPresent()){
-            pictureFailed();
-            return null;
-        }
-
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "Selflip");
-
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists()){
-            if (!mediaStorageDir.mkdirs()){
-                //Failed to create directory
-                pictureFailed();
-                return null;
-            }
-        }
-
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile = new File(mediaStorageDir.getPath() + File.separator + "SELFLIP_IMG_"+ timeStamp + ".jpg");
-
-        return mediaFile;
-    }
-
-    private boolean isSDPresent() {
-        return android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
-    }
 
 }
