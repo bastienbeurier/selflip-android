@@ -32,6 +32,9 @@ public class CompositingView extends View {
     private int mX = 0;
     private int mY = 0;
 
+    private int mPreviousX = 0;
+    private int mPreviousY = 0;
+
 
     public CompositingView(Context context) {
         super(context);
@@ -111,16 +114,22 @@ public class CompositingView extends View {
     public boolean onTouchEvent(MotionEvent event) {
 
         if(event.getAction() == MotionEvent.ACTION_DOWN){
+            mPreviousX = (int) event.getRawX();
+            mPreviousY = (int) event.getRawY();
             return true;
         }
 
         if(event.getAction() == MotionEvent.ACTION_MOVE){
-            mX = (int) event.getRawX() - getWidth() / 2;
-            mY = (int) event.getRawY() - getHeight() / 2;
+            int deltaX = (int) (event.getRawX() - mPreviousX);
+            int deltaY = (int) (event.getRawY() - mPreviousY);
+            mX += deltaX;
+            mY += deltaY;
             Matrix m = new Matrix();
             m.setTranslate(mX, mY);
             mShaderPaint.getShader().setLocalMatrix(m);
             invalidate();
+            mPreviousX = (int) event.getRawX();
+            mPreviousY = (int) event.getRawY();
         }
 
         return super.onTouchEvent(event);
