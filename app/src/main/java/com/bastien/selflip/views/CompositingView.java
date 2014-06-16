@@ -160,7 +160,7 @@ public class CompositingView extends View {
         FileOutputStream out = new FileOutputStream(f);
         Bitmap b = Bitmap.createBitmap(getWidth() , getHeight(), Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
-        invalidate();
+        mShaderPaint.getShader().setLocalMatrix(new Matrix());
         draw(c);
         b.compress(Bitmap.CompressFormat.JPEG, 100, out);
     }
