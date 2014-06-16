@@ -6,6 +6,7 @@ import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
@@ -81,7 +82,8 @@ public class CompositingView extends View {
     private void setupBitmapShader(){
         if(mFadedBitmap != null){
             mShaderPaint = new Paint();
-            mShaderPaint.setShader(new BitmapShader(Bitmap.createScaledBitmap(mFadedBitmap, getWidth(), getHeight(), true), Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
+            BitmapShader shader = new BitmapShader(Bitmap.createScaledBitmap(mFadedBitmap, getWidth(), getHeight(), true), Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
+            mShaderPaint.setShader(shader);
         }
     }
 
@@ -115,6 +117,9 @@ public class CompositingView extends View {
         if(event.getAction() == MotionEvent.ACTION_MOVE){
             mX = (int) event.getRawX() - getWidth() / 2;
             mY = (int) event.getRawY() - getHeight() / 2;
+            Matrix m = new Matrix();
+            m.setTranslate(mX, mY);
+            mShaderPaint.getShader().setLocalMatrix(m);
             invalidate();
         }
 
