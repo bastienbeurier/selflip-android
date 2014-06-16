@@ -30,9 +30,8 @@ public class CompositionActivity extends Activity implements SeekBar.OnSeekBarCh
         mGradientSeekBar.setOnSeekBarChangeListener(this);
         mGradientSeekBar.setProgress(50);
 
-        mCompositingView.setFadedBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.fd
-        ));
-        mCompositingView.setBackgroundBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.bg));
+        mCompositingView.setFadedBitmap(BitmapFactory.decodeFile(getIntent().getStringExtra("topImage")));
+        mCompositingView.setBackgroundBitmap(BitmapFactory.decodeFile(getIntent().getStringExtra("bottomImage")));
     }
 
 

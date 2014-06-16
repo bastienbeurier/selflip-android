@@ -56,6 +56,7 @@ public class CompositingView extends View {
     private void init() {
         setupGradient();
         setupBitmapShader();
+        setupBackgroundBitmap();
     }
 
     @Override
@@ -93,6 +94,10 @@ public class CompositingView extends View {
             BitmapShader shader = new BitmapShader(Bitmap.createScaledBitmap(mFadedBitmap, getWidth(), getHeight(), true), Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
             mShaderPaint.setShader(shader);
         }
+    }
+
+    private void setupBackgroundBitmap(){
+        mBackgroundBitmap = Bitmap.createScaledBitmap(mBackgroundBitmap, getWidth(), getHeight(), true);
     }
 
     public void setGradientPosition(float position){

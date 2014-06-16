@@ -256,23 +256,15 @@ public class ShootActivity extends Activity {
             if (pictureMode == 0) {
                 topImagePath = pictureFile.getAbsolutePath().toString();
 
-                Bitmap formattedPicture = ImageUtils.decodeFile(topImagePath);
+                Bitmap bm = saveFormattedImage(topImagePath);
 
-                if (formattedPicture.getHeight() < formattedPicture.getWidth()) {
-                    if (frontCamera) {
-                        formattedPicture = ImageUtils.rotateImage(formattedPicture);
-                    } else {
-                        formattedPicture = ImageUtils.reverseRotateImage(formattedPicture);
-                        formattedPicture = ImageUtils.mirrorBitmap(formattedPicture);
-                    }
-                }
-
-                float previewRatio = (float) preview.getHeight()/ (float) preview.getWidth();
-                topImage.setImageBitmap(ImageUtils.resizeAndCropToTopHalf(formattedPicture, previewRatio));
+                topImage.setImageBitmap(ImageUtils.cropToTopHalf(bm));
 
                 bottomPictureMode();
             } else {
                 bottomImagePath = pictureFile.getAbsolutePath().toString();
+
+                saveFormattedImage(bottomImagePath);
 
                 Intent composition = new Intent(ShootActivity.this, CompositionActivity.class);
 
@@ -283,6 +275,31 @@ public class ShootActivity extends Activity {
             }
         }
     };
+
+    private Bitmap saveFormattedImage(String path) {
+        Bitmap formattedPicture = ImageUtils.decodeFile(path);
+
+        if (formattedPicture.getHeight() < formattedPicture.getWidth()) {
+            if (frontCamera) {
+                formattedPicture = ImageUtils.rotateImage(formattedPicture);
+            } else {
+                formattedPicture = ImageUtils.reverseRotateImage(formattedPicture);
+                formattedPicture = ImageUtils.mirrorBitmap(formattedPicture);
+            }
+        }
+
+        float previewRatio = (float) preview.getHeight()/ (float) preview.getWidth();
+        Bitmap bm = ImageUtils.resize(formattedPicture, previewRatio);
+        File f = new File(path);
+        try {
+            FileOutputStream out = new FileOutputStream(f);
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return formattedPicture;
+    }
 
     private void releaseCamera(){
         if (mCamera != null){

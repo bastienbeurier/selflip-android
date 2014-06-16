@@ -108,31 +108,13 @@ public class ImageUtils {
         }
     }
 
-    static public Bitmap resizeAndCropToTopHalf(Bitmap bitmap, float previewRatio) {
-        float pictureRatio = (float) bitmap.getWidth() / (float) bitmap.getHeight();
-
-        if (pictureRatio > previewRatio) {
-            int currentHeight = bitmap.getHeight();
-            int targetHeight = (int) (bitmap.getWidth() * previewRatio);
-
-            return Bitmap.createBitmap(
-                    bitmap,
-                    0,
-                    (currentHeight - targetHeight) / 2,
-                    bitmap.getWidth(),
-                    targetHeight/2);
-        } else {
-
-            int currentWidth = bitmap.getWidth();
-            int targetWidth = (int) (bitmap.getHeight() / previewRatio);
-
-            return Bitmap.createBitmap(
-                    bitmap,
-                    (currentWidth - targetWidth) / 2,
-                    0,
-                    targetWidth,
-                    bitmap.getHeight()/2);
-        }
+    static public Bitmap cropToTopHalf(Bitmap bitmap) {
+        return Bitmap.createBitmap(
+                bitmap,
+                0,
+                0,
+                bitmap.getWidth(),
+                bitmap.getHeight()/2);
     }
 
 }
