@@ -13,61 +13,93 @@ import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.bastien.selflip.R;
-
 /**
  * Created by guillaumelachaud on 6/15/14.
  */
 public class CompositingView extends View {
 
+    private Bitmap mBackgroundBitmap;
+    private Bitmap mFadedBitmap;
+    private Bitmap mMaskBitmap;
+
+    private Paint mShaderPaint;
+    private Paint mBackgroundPaint = new Paint();
+
+    private float mGradientPosition = 0.0f;
+
 
 
     public CompositingView(Context context) {
         super(context);
+        init();
     }
 
     public CompositingView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public CompositingView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+        setupGradient();
+        setupBitmapShader();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        canvas.drawColor(Color.RED);
+        if(mBackgroundBitmap != null){
+            canvas.drawBitmap(mBackgroundBitmap, 0, 0, mBackgroundPaint);
+        }
+        canvas.drawBitmap(mMaskBitmap,0,0,mShaderPaint);
 
+    }
+
+    private void setupGradient() {
         Paint p = new Paint();
-        Shader mShader = new LinearGradient(0, getHeight()/2,0, getHeight()/2+(float) (0.05*getHeight()),new int[] {
+        int offset = (int) (mGradientPosition * (getHeight() / 2));
+
+        Shader shader = new LinearGradient(0, getHeight()/2 + offset,0, getHeight()/2+(float) (0.05*getHeight()),new int[] {
                 Color.BLACK, Color.TRANSPARENT },
                 null, Shader.TileMode.CLAMP);
 
-        p.setShader(mShader);
+        p.setShader(shader);
 
         Rect r = new Rect(0,0,getWidth(),getHeight());
 
         //MASK
-        Bitmap mask = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ALPHA_8);
-        Canvas maskCanvas = new Canvas(mask);
+        mMaskBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ALPHA_8);
+        Canvas maskCanvas = new Canvas(mMaskBitmap);
         maskCanvas.drawRect(r, p);
-
-        Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-        Bitmap scaled = Bitmap.createScaledBitmap(b, getWidth(), getHeight(), true);
-        Shader bShader = new BitmapShader(scaled, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
-        Paint bp = new Paint();
-        bp.setShader(bShader);
-        canvas.drawBitmap(mask,0,0,bp);
-
     }
 
-    private Bitmap convertToAlphaMask(Bitmap b) {
-        Bitmap a = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ALPHA_8);
-        Canvas c = new Canvas(a);
-        c.drawBitmap(b, 0.0f, 0.0f, null);
-        return a;
+    private void setupBitmapShader(){
+        if(mFadedBitmap != null){
+            mShaderPaint = new Paint();
+            mShaderPaint.setShader(new BitmapShader(mFadedBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
+        }
+    }
+
+    public void setGradientPosition(float position){
+        mGradientPosition = position;
+        setupGradient();
+        invalidate();
+    }
+
+    public void setBackgroundBitmap(Bitmap bgBitmap){
+        mBackgroundBitmap = bgBitmap;
+        invalidate();
+    }
+
+    public void setFadedBitmap(Bitmap fadedBitmap){
+        mFadedBitmap = fadedBitmap;
+        setupBitmapShader();
+        invalidate();
     }
 
 }
