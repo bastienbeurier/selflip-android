@@ -30,7 +30,8 @@
             android:padding="8dp"
             android:src="@drawable/shoot_flip_button"
             android:layout_gravity="center|right"
-            android:layout_marginRight="30dp"/>
+            android:layout_marginRight="30dp"
+            android:visibility="gone"/>
 
     </FrameLayout>
 
