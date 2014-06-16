@@ -78,7 +78,7 @@ public class CompositingView extends View {
     private void setupBitmapShader(){
         if(mFadedBitmap != null){
             mShaderPaint = new Paint();
-            mShaderPaint.setShader(new BitmapShader(mFadedBitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
+            mShaderPaint.setShader(new BitmapShader(Bitmap.createScaledBitmap(mFadedBitmap, getWidth(), getHeight(), true), Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
         }
     }
 
@@ -95,8 +95,11 @@ public class CompositingView extends View {
 
     public void setFadedBitmap(Bitmap fadedBitmap){
         mFadedBitmap = fadedBitmap;
-        setupBitmapShader();
-        invalidate();
+        if(getWidth() > 0){
+            setupBitmapShader();
+            invalidate();
+        }
+
     }
 
     @Override
