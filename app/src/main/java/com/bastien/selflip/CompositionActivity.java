@@ -5,11 +5,9 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.SeekBar;
 
-import com.bastien.selflip.R;
 import com.bastien.selflip.views.CompositingView;
 
 import java.io.FileNotFoundException;

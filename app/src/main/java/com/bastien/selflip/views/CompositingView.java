@@ -10,6 +10,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
+import android.os.Environment;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -175,7 +176,8 @@ public class CompositingView extends View {
     }
 
     public void saveToDisk() throws FileNotFoundException {
-        File f = new File(getContext().getExternalFilesDir(null).getAbsolutePath(), "selflip_" + System.currentTimeMillis() + ".jpg");
+        File f = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "Selflip/selflip_" + System.currentTimeMillis() + ".jpg");
         FileOutputStream out = new FileOutputStream(f);
         Bitmap b = Bitmap.createBitmap(getWidth() , getHeight(), Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
