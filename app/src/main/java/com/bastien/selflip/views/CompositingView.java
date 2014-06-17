@@ -2,7 +2,6 @@ package com.bastien.selflip.views;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -37,8 +36,12 @@ public class CompositingView extends View {
     private int mX = 0;
     private int mY = 0;
 
+    private Matrix mTempMatrix = new Matrix();
+
     private int mPreviousX = 0;
     private int mPreviousY = 0;
+
+    private int topOffset;
 
 
     public CompositingView(Context context) {
@@ -57,11 +60,22 @@ public class CompositingView extends View {
         setupGradient();
         setupBitmapShader();
         setupBackgroundBitmap();
+        int[] coords = {0,0};
+        getLocationOnScreen(coords);
+        topOffset = coords[1];
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+        if(canvas.isHardwareAccelerated()){
+            //Absolute coordinates
+
+            mShaderPaint.getShader().getLocalMatrix(mTempMatrix);
+            mTempMatrix.postTranslate(0, topOffset);
+            mShaderPaint.getShader().setLocalMatrix(mTempMatrix);
+        }
 
         if(mBackgroundBitmap != null){
             canvas.drawBitmap(mBackgroundBitmap, 0, 0, mBackgroundPaint);
